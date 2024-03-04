@@ -11,29 +11,29 @@ from advsearch import main as advsearch_main
 def main():
     print("\nВыполнение логики accruals.py...")
     accruals_main()
-    print("\nОжидаем 60 секунд для запуска следующей задачи...")
-    time.sleep(60)
+    print("\nОжидаем 10 секунд для запуска следующей задачи...")
+    time.sleep(10)
 
     print("\nВыполнение логики fbo.py...")
     fbo_main()
-    print("\nОжидаем 60 секунд для запуска следующей задачи...")
-    time.sleep(60)
+    print("\nОжидаем 10 секунд для запуска следующей задачи...")
+    time.sleep(10)
 
     print("\nВыполнение логики leftovers.py...")
     leftovers_main()
-    print("\nОжидаем 60 секунд для запуска следующей задачи...")
-    time.sleep(60)
+    print("\nОжидаем 10 секунд для запуска следующей задачи...")
+    time.sleep(10)
 
     print("\nВыполнение логики advstencil.py...")
     advstencil_main()
-    print("\nОжидаем 60 секунд для запуска следующей задачи...")
-    time.sleep(60)
+    print("\nОжидаем 10 секунд для запуска следующей задачи...")
+    time.sleep(10)
 
     print("Выполнение логики advsearch.py...")
     advsearch_main()
     print("\n")
     print("#" * 50)
-    print(f"Обновление {sys.argv[1]} успешно завершено")
+    print(f"     Обновление {sys.argv[1]} успешно завершено")
     print("#" * 50)
     print("\n")
 

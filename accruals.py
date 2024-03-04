@@ -79,10 +79,13 @@ def main():
         sku_artikul_pairs = json.load(file)
         sku_to_artikul = {pair[0]: pair[1] for pair in sku_artikul_pairs}
 
-    current_datetime = get_current_timestamp()[1]
+    _, current_datetime = get_current_timestamp()
+
+    delta_correction = 1 if current_datetime.month == 3 else 0
+
     first_month_start = (current_datetime - timedelta(days=60)).strftime("%Y-%m-%dT00:00:00.000Z")
-    first_month_end = (current_datetime - timedelta(days=31)).strftime("%Y-%m-%dT00:00:00.000Z")
-    second_month_start = (current_datetime - timedelta(days=30)).strftime("%Y-%m-%dT00:00:00.000Z")
+    first_month_end = (current_datetime - timedelta(days=31 - delta_correction)).strftime("%Y-%m-%dT00:00:00.000Z")
+    second_month_start = (current_datetime - timedelta(days=30 - delta_correction)).strftime("%Y-%m-%dT00:00:00.000Z")
     second_month_end = current_datetime.strftime("%Y-%m-%dT00:00:00.000Z")
 
     trans_data = get_transactions(first_month_start, first_month_end)

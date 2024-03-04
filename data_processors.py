@@ -4,9 +4,7 @@ import time
 import gspread
 from tqdm import tqdm
 import re
-
-
-from utils import format_date
+from utils import format_date, format_number
 from utils import get_gspread_client, get_current_timestamp
 
 
@@ -14,7 +12,9 @@ def prepare_data_for_table(transactions_data, service_mapping, sku_to_artikul_di
     all_values = []
 
     print("\nНачало подготовки данных для таблицы...")
-    conn = sqlite3.connect('/home/k/kdm05mtg/ozongoogle/accruals.db')
+    # conn = sqlite3.connect('/home/k/kdm05mtg/ozongoogle/accruals.db')
+    conn = sqlite3.connect('accruals.db')
+
     cursor = conn.cursor()
 
     columns = ['operation_id', 'operation_date', 'operation_type_name', 'posting_number', 'order_date',
@@ -47,13 +47,13 @@ def prepare_data_for_table(transactions_data, service_mapping, sku_to_artikul_di
             transaction.get('accruals_for_sale', 0),
             transaction.get('delivery_charge', 0),
             transaction.get('return_delivery_charge', 0),
-            transaction.get('sale_commission', 0),
+            format_number(transaction.get('sale_commission', 0)),
             transaction.get('posting', {}).get('delivery_schema', '')
         ]
         services_data = {service['name']: service['price'] for service in transaction.get('services', [])}
         for service_name in service_mapping.keys():
-            row.append(services_data.get(service_name, 0))
-        row.append(transaction.get('amount', 0))
+            row.append(format_number(services_data.get(service_name, 0)))
+        row.append(format_number(transaction.get('amount', 0)))
         all_values.append(row)
         placeholders = ', '.join(['?'] * len(row))
         cursor.execute(f'INSERT INTO accruals VALUES ({placeholders})', row)
@@ -186,8 +186,16 @@ def update_sheet(transactions_data, worksheet_name, headers, format_headers=None
                 sys.stdout.flush()
             if format_headers:
                 if re.match(r"Выгрузка НАЧИСЛЕНИЙ\((1|2)\)", worksheet_name):
-                  worksheet.format('B:B', {"numberFormat": {"type": "DATE"}})
-                  worksheet.format('E:E', {"numberFormat": {"type": "DATE_TIME"}})
+                    worksheet.format('B:B', {"numberFormat": {"type": "DATE"}})
+                    worksheet.format('E:E', {"numberFormat": {"type": "DATE_TIME"}})
+                    num_format = {"numberFormat": {"type": "NUMBER", "pattern": "#,##0.00"}}
+                    columns_to_format = ['J', 'K', 'L', 'M', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
+                                         'Z'] + \
+                                        ['AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM',
+                                         'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV']
+
+                    for col in columns_to_format:
+                        worksheet.format(f'{col}:{col}', num_format)
                 elif re.match(r"Выгрузка ОСТАТКИ \((1|2)\)", worksheet_name):
                     worksheet.format('C:C', {"numberFormat": {"type": "DATE"}})
                     worksheet.format('D:D', {"numberFormat": {"type": "DATE_TIME"}})

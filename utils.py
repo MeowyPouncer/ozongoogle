@@ -7,7 +7,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 def get_gspread_client():
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
     creds = ServiceAccountCredentials.from_json_keyfile_name(
-        '/home/k/kdm05mtg/ozongoogle/nth-gasket-344316-1548610b3501.json', scope)
+        'placeholder.json', scope)
     client = gspread.authorize(creds)
     return client
 
@@ -17,6 +17,12 @@ def format_date(date_str):
         return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%d-%m-%Y, %H:%M')
     except ValueError:
         return ''
+
+
+def format_number(value):
+    if isinstance(value, (float, int)):
+        return f"{value:.2f}".replace('.', ',')
+    return value
 
 
 def get_current_timestamp():
@@ -31,8 +37,10 @@ def format_headers(headers, worksheet):
 
 
 def get_headers():
-    client_id = os.getenv('OZON_CLIENT_ID')
-    api_key = os.getenv('OZON_API_KEY')
+    # client_id = os.getenv('OZON_CLIENT_ID')
+    # api_key = os.getenv('OZON_API_KEY')
+    client_id = '1020252'
+    api_key = 'f65c3673-9a24-4ce8-9653-e241011f3c40'
     if not client_id or not api_key:
         raise Exception("Необходимо задать переменные окружения OZON_CLIENT_ID и OZON_API_KEY")
     headers = {
